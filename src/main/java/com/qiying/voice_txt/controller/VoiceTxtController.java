@@ -20,9 +20,9 @@ public class VoiceTxtController {
     public String message() {
         boolean b = voiceTxtService.startGetMessage();
         if (b) {
-            return "thread start!";
+            return "get message thread start!";
         } else {
-            return "thread fail!";
+            return "get message thread fail!";
         }
     }
 }

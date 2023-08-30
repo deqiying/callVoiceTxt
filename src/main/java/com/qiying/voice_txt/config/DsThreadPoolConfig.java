@@ -16,7 +16,7 @@ public class DsThreadPoolConfig {
         executor.setMaxPoolSize(1);
         executor.setQueueCapacity(0);
         executor.setKeepAliveSeconds(300);
-        executor.setThreadNamePrefix("dsMonitorTaskPoolExecutor-");
+        executor.setThreadNamePrefix("message-");
         // 线程池对拒绝任务(无线程可用)的处理策略
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.DiscardPolicy());
         return executor;
