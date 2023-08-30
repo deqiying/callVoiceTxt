@@ -2,6 +2,7 @@ package com.qiying.voice_txt.controller;
 
 import com.qiying.voice_txt.service.VoiceTxtService;
 import jakarta.annotation.Resource;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -35,5 +36,10 @@ public class VoiceTxtController {
     @GetMapping("/stop")
     public void stop() {
         voiceTxtService.stop();
+    }
+
+    @GetMapping("/setSleepTime")
+    public void setSleepTime(@Param("timeMillis") Long timeMillis) {
+        voiceTxtService.setSleepTime(timeMillis);
     }
 }

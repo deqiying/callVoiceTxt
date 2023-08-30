@@ -29,7 +29,7 @@ public class VoiceTxtServiceImpl extends ServiceImpl<VoiceTxtMapper, VoiceTxt>
     ThreadPoolTaskExecutor threadPoolTaskExecutor;
     @Resource
     GetMessageUtils getMessageUtils;
-    private static final Long oneSecond = 1000L;
+    private static Long sleepTimeMillis = 1000L;
     private final ReentrantLock lock = new ReentrantLock();
     private static Boolean isStop = false;
 
@@ -65,6 +65,13 @@ public class VoiceTxtServiceImpl extends ServiceImpl<VoiceTxtMapper, VoiceTxt>
         isStop = true;
     }
 
+    @Override
+    public void setSleepTime(Long timeMillis) {
+        if (timeMillis != null && timeMillis > 0) {
+            sleepTimeMillis = timeMillis;
+        }
+    }
+
     public Boolean getIsStop() {
         return VoiceTxtServiceImpl.isStop;
     }
@@ -87,9 +94,11 @@ public class VoiceTxtServiceImpl extends ServiceImpl<VoiceTxtMapper, VoiceTxt>
                     }
                 }
                 long end = System.currentTimeMillis();
-                long l = oneSecond - (end - start);
+                long l = sleepTimeMillis - (end - start);
                 if (l > 0) {
-                    Thread.sleep(l);
+                    synchronized (lock) {
+                        lock.wait(l);
+                    }
                 }
                 if (this.getIsStop()) {
                     synchronized (lock) {

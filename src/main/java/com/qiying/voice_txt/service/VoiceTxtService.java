@@ -19,4 +19,6 @@ public interface VoiceTxtService extends IService<VoiceTxt> {
 
     void stop();
 
+    void setSleepTime(Long timeMillis);
+
 }
