@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.qiying</groupId>
     <artifactId>voice_txt</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
     <name>voice_txt</name>
     <description>voice_txt</description>
     <properties>
