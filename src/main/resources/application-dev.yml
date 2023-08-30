@@ -44,7 +44,3 @@ springdoc:
     disable-swagger-default-url: true
     default-models-expand-depth: 2
     display-request-duration: true
-
-mybatis-plus:
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

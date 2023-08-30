@@ -17,6 +17,11 @@ public class VoiceTxt implements Serializable {
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
     /**
+     * id
+     */
+    @TableId
+    private Long id;
+    /**
      * 公司代码
      */
     private String tenantId;
@@ -24,7 +29,6 @@ public class VoiceTxt implements Serializable {
     /**
      * 呼叫id
      */
-    @TableId
     private String callId;
 
     /**
