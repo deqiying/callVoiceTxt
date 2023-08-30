@@ -1,0 +1,50 @@
+server:
+  port: 8080
+spring:
+  mvc:
+    # 修改成“/staticResources/**”映射，用于5.8版本静态资源访问
+    static-path-pattern: /staticResources/**
+  web:
+    resources:
+      static-locations: classpath:/static,classpath:/public,classpath:/resources,classpath:/META-INF/resources,file:/home/workspace
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://172.18.5.44:3306/voice_txt?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8
+    username: root
+    password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      # Druid 配置
+      initialSize: 2
+      maxActive: 10
+      maxWait: 60000
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: select 1
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: true
+      maxPoolPreparedStatementPerConnectionSize: 20
+      username: ${spring.datasource.username}
+      password: ${spring.datasource.password}
+      url: ${spring.datasource.url}
+
+  servlet:
+    multipart:
+      max-file-size: 1024MB
+      max-request-size: 1024MB
+
+springdoc:
+  api-docs:
+    path: /api/doc.json
+  swagger-ui:
+    url: /api/doc.json
+    path: /api/doc.html
+    disable-swagger-default-url: true
+    default-models-expand-depth: 2
+    display-request-duration: true
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
