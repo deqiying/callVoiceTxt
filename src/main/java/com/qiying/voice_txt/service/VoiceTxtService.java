@@ -14,4 +14,9 @@ public interface VoiceTxtService extends IService<VoiceTxt> {
     List<VoiceTxt> getNoViceList();
 
     boolean startGetMessage();
+
+    void start();
+
+    void stop();
+
 }

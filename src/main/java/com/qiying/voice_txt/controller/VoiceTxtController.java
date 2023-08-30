@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class VoiceTxtController {
     @Resource
     VoiceTxtService voiceTxtService;
+
     @GetMapping("/message")
     public String message() {
         boolean b = voiceTxtService.startGetMessage();
@@ -24,5 +25,15 @@ public class VoiceTxtController {
         } else {
             return "get message thread fail!";
         }
+    }
+
+    @GetMapping("/start")
+    public void start() {
+        voiceTxtService.start();
+    }
+
+    @GetMapping("/stop")
+    public void stop() {
+        voiceTxtService.stop();
     }
 }

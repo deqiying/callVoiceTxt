@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author deqing
@@ -28,7 +29,9 @@ public class VoiceTxtServiceImpl extends ServiceImpl<VoiceTxtMapper, VoiceTxt>
     ThreadPoolTaskExecutor threadPoolTaskExecutor;
     @Resource
     GetMessageUtils getMessageUtils;
-    private static final long oneSecond = 1000L;
+    private static final Long oneSecond = 1000L;
+    private final ReentrantLock lock = new ReentrantLock();
+    private static Boolean isStop = false;
 
     @Override
     public List<VoiceTxt> getNoViceList() {
@@ -45,34 +48,60 @@ public class VoiceTxtServiceImpl extends ServiceImpl<VoiceTxtMapper, VoiceTxt>
     public boolean startGetMessage() {
         List<VoiceTxt> noViceList = this.getNoViceList();
         Iterator<VoiceTxt> iterator = noViceList.iterator();
-        threadPoolTaskExecutor.execute(() -> {
-            try {
-                while (iterator.hasNext()) {
-                    long start = System.currentTimeMillis();
-                    VoiceTxt next = iterator.next();
-                    if (next == null) {
-                        continue;
-                    }
-                    log.info("run id:"+next.getId());
-                    if (StringUtils.isNotBlank(next.getCallId()) && StringUtils.isNotBlank(next.getTenantId())) {
-                        String message = getMessageUtils.getMessage(next);
-                        if (StringUtils.isNotBlank(message)) {
-                            next.setMessage(message);
-                            this.updateById(next);
-                            log.info("update id:"+next.getId());
-                        }
-                    }
-                    long end = System.currentTimeMillis();
-                    long l = oneSecond - (end - start);
-                    if (l > 0) {
-                        Thread.sleep(l);
+        threadPoolTaskExecutor.execute(() -> getMessage(iterator));
+        return true;
+    }
+
+    @Override
+    public void start() {
+        synchronized (lock) {
+            isStop = false;
+            lock.notifyAll();
+        }
+    }
+
+    @Override
+    public synchronized void stop() {
+        isStop = true;
+    }
+
+    public Boolean getIsStop() {
+        return VoiceTxtServiceImpl.isStop;
+    }
+
+    private void getMessage(Iterator<VoiceTxt> iterator) {
+        try {
+            while (iterator.hasNext()) {
+                long start = System.currentTimeMillis();
+                VoiceTxt next = iterator.next();
+                if (next == null) {
+                    continue;
+                }
+                log.info("run id:" + next.getId());
+                if (StringUtils.isNotBlank(next.getCallId()) && StringUtils.isNotBlank(next.getTenantId())) {
+                    String message = getMessageUtils.getMessage(next);
+                    if (StringUtils.isNotBlank(message)) {
+                        next.setMessage(message);
+                        this.updateById(next);
+                        log.info("update id:" + next.getId());
                     }
                 }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
+                long end = System.currentTimeMillis();
+                long l = oneSecond - (end - start);
+                if (l > 0) {
+                    Thread.sleep(l);
+                }
+                if (this.getIsStop()) {
+                    synchronized (lock) {
+                        log.info("Thread wait");
+                        lock.wait();
+                        log.info("Thread awakening");
+                    }
+                }
             }
-        });
-        return true;
+        } catch (Exception e) {
+            log.error("some error:", e);
+        }
     }
 }
 
