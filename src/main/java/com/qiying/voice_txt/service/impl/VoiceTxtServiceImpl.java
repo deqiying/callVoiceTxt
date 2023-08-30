@@ -8,6 +8,7 @@ import com.qiying.voice_txt.mapper.VoiceTxtMapper;
 import com.qiying.voice_txt.service.VoiceTxtService;
 import com.qiying.voice_txt.utils.GetMessageUtils;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ import java.util.List;
  * @description 针对表【voice_txt(外呼云转义明细)】的数据库操作Service实现
  * @createDate 2023-08-30 10:46:22
  */
+@Slf4j
 @Service
 public class VoiceTxtServiceImpl extends ServiceImpl<VoiceTxtMapper, VoiceTxt>
         implements VoiceTxtService {
@@ -51,14 +53,15 @@ public class VoiceTxtServiceImpl extends ServiceImpl<VoiceTxtMapper, VoiceTxt>
                     if (next == null) {
                         continue;
                     }
+                    log.info("run id:"+next.getId());
                     if (StringUtils.isNotBlank(next.getCallId()) && StringUtils.isNotBlank(next.getTenantId())) {
                         String message = getMessageUtils.getMessage(next);
                         if (StringUtils.isNotBlank(message)) {
                             next.setMessage(message);
                             this.updateById(next);
+                            log.info("update id:"+next.getId());
                         }
                     }
-                    System.out.println(next.getId());
                     long end = System.currentTimeMillis();
                     long l = oneSecond - (end - start);
                     if (l > 0) {
