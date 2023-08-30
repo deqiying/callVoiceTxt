@@ -13,4 +13,5 @@ import java.util.List;
 public interface VoiceTxtService extends IService<VoiceTxt> {
     List<VoiceTxt> getNoViceList();
 
+    boolean startGetMessage();
 }
